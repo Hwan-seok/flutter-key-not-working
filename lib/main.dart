@@ -2,6 +2,7 @@ import 'dart:developer' as d;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 import 'package:testing/controller.dart';
 import 'package:testing/live_page.dart';
 import 'package:testing/vod_controller.dart';
@@ -37,7 +38,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
-    Get.create(() => VodController());
     super.initState();
   }
 
@@ -46,23 +46,27 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: GetBuilder<HomeController>(
         init: HomeController(),
-        builder: (controller) => ListView.builder(
+        builder: (controller) => ListView.custom(
           scrollDirection: Axis.vertical,
-          itemBuilder: (context, index) {
-            d.log("page build index: $index");
-            if (index < 2)
-              return LivePage(
-                key: ValueKey(controller.pages[index]),
-                id: controller.pages[index],
-              );
-            else
-              return VodPage(
-                // init / dispose => called on update
-                key: ValueKey(controller.pages[index]),
-                id: controller.pages[index],
-              );
-          },
-          itemCount: controller.pages.length,
+          childrenDelegate: SliverChildBuilderDelegate(
+            (_, int index) {
+              d.log("page build index: $index");
+              if (index < 2)
+                return LivePage(
+                  key: ValueKey(controller.pages[index]),
+                  id: controller.pages[index],
+                );
+              else
+                return VodPage(
+                  // init / dispose => called on update
+                  key: ValueKey(controller.pages[index]),
+                  id: controller.pages[index],
+                );
+            },
+            findChildIndexCallback: (key) =>
+                controller.pages.indexWhere((int element) => (key as ValueKey).value == element),
+            childCount: controller.pages.length,
+          ),
         ),
       ),
     );

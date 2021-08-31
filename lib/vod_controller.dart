@@ -3,17 +3,19 @@ import 'dart:developer';
 import 'package:get/get.dart';
 
 class VodController extends GetxController {
-  VodController();
+  final int id;
+
+  VodController(this.id);
 
   @override
   void onInit() {
-    log("init Vod Controller");
+    log("init $id Vod Controller");
     super.onInit();
   }
 
   @override
   void onClose() {
-    log("Close Vod Controller");
+    log("Close $id Vod Controller");
     super.onClose();
   }
 }

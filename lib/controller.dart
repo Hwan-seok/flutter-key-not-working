@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:get/get.dart';
+import 'package:testing/vod_controller.dart';
 
 class HomeController extends GetxController {
   final pages = <int>[];
@@ -8,6 +9,13 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     pages.addAll(List.generate(100, (index) => index));
+    pages.forEach((element) {
+      Get.lazyPut(
+        () => VodController(element),
+        tag: pages[element].toString(),
+        fenix: true,
+      );
+    });
     super.onInit();
   }
 
