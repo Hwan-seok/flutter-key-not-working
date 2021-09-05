@@ -47,6 +47,9 @@ class _MyHomePageState extends State<MyHomePage> {
             alignment: Alignment.center,
             children: [
               VideoPlayer(controller.video),
+              GestureDetector(
+                onTap: () => controller.togglePlay(),
+              ),
               ValueListenableBuilder<VideoPlayerValue>(
                 valueListenable: controller.video,
                 builder: (context, value, child) => ProgressBar(

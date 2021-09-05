@@ -18,4 +18,8 @@ class Controller extends GetxController {
     video.dispose();
     super.onClose();
   }
+
+  Future<void> togglePlay() async {
+    video.value.isPlaying ? await video.pause() : await video.play();
+  }
 }
