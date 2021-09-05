@@ -1,12 +1,8 @@
-import 'dart:developer' as d;
-
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:preload_page_view/preload_page_view.dart';
 import 'package:testing/controller.dart';
-import 'package:testing/live_page.dart';
-import 'package:testing/vod_controller.dart';
-import 'package:testing/vod_page.dart';
+import 'package:video_player/video_player.dart';
 
 void main() {
   runApp(MyApp());
@@ -44,29 +40,26 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GetBuilder<HomeController>(
-        init: HomeController(),
-        builder: (controller) => ListView.custom(
-          scrollDirection: Axis.vertical,
-          childrenDelegate: SliverChildBuilderDelegate(
-            (_, int index) {
-              d.log("page build index: $index");
-              if (index < 2)
-                return LivePage(
-                  key: ValueKey(controller.pages[index]),
-                  id: controller.pages[index],
-                );
-              else
-                return VodPage(
-                  // init / dispose => called on update
-                  key: ValueKey(controller.pages[index]),
-                  id: controller.pages[index],
-                );
-            },
-            findChildIndexCallback: (key) =>
-                controller.pages.indexWhere((int element) => (key as ValueKey).value == element),
-            childCount: controller.pages.length,
+      body: GetBuilder<Controller>(
+        init: Controller(),
+        builder: (controller) => PageView.builder(
+          itemBuilder: (context, index) => Stack(
+            alignment: Alignment.center,
+            children: [
+              VideoPlayer(controller.video),
+              ValueListenableBuilder<VideoPlayerValue>(
+                valueListenable: controller.video,
+                builder: (context, value, child) => ProgressBar(
+                  progress: value.position,
+                  total: value.duration,
+                  onSeek: (duration) {
+                    controller.video.seekTo(duration);
+                  },
+                ),
+              ),
+            ],
           ),
+          itemCount: 2,
         ),
       ),
     );

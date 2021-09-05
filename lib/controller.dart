@@ -1,27 +1,21 @@
-import 'dart:developer';
-
 import 'package:get/get.dart';
-import 'package:testing/vod_controller.dart';
+import 'package:video_player/video_player.dart';
 
-class HomeController extends GetxController {
-  final pages = <int>[];
+class Controller extends GetxController {
+  final video = VideoPlayerController.network(
+      "https://d20uwst3rmplc8.cloudfront.net/live/3367/20210902053517ZjyZTb/0a953ac2ff4a2e00699432b2871689f3_20210902053517ZjyZTb.m3u8");
 
   @override
-  void onInit() {
-    pages.addAll(List.generate(100, (index) => index));
-    pages.forEach((element) {
-      Get.lazyPut(
-        () => VodController(element),
-        tag: pages[element].toString(),
-        fenix: true,
-      );
-    });
+  void onInit() async {
+    await video.initialize();
+    await video.play();
+    video.setLooping(true);
     super.onInit();
   }
 
-  void remove(int id) {
-    pages.remove(id);
-    log("$id 삭제");
-    update();
+  @override
+  void onClose() {
+    video.dispose();
+    super.onClose();
   }
 }
